@@ -6,5 +6,8 @@
   
 * Backend - django
   ```sh
+  pipenv shell
+  ```
+  ```sh
   python manage.py runserver
   ```
