@@ -11,13 +11,13 @@ def get_location(ip):
     try:
         city = data['city']
         latitude = data['latitude']
-        longitude = data['longitude']
-        print(data)
+        longitude = data['longitude']        
         state = data['region_name']
         country = data['country_name']
+        country_flag = data['location']['country_flag']
     except KeyError as a:
         latitude, longitude, city, state, country = 0, 0, None, None, None
-    return (ip, latitude, longitude, city, state, country)
+    return (ip, latitude, longitude, city, state, country, country_flag)
 
 def get_locations(ip_list):
     locations = []

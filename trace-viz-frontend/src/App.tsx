@@ -13,6 +13,8 @@ function App() {
   const [messageHistory, setMessageHistory] = React.useState<any[]>([]);
   const [tracerouteStatus, setTracerouteStatus] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [graphURL, setGraphURL] = useState<string | null>(null);
+  const [mapURL, setMapURL] = useState<string | null>(null);
 
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, webSocketOptions);
@@ -41,8 +43,13 @@ function App() {
     } else if (readyState === 3) {
       console.log('Connection closed');
       setTracerouteStatus('Traceroute Finished');
+
+      if (!errorMessage) {
+        setMapURL('http://127.0.0.1:8000/getmap/');
+        setGraphURL('http://127.0.0.1:8000/getgraph/'); 
+      }       
     }
-  }, [readyState]);
+  }, [readyState, errorMessage]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -64,6 +71,10 @@ function App() {
       // Start a new WebSocket connection
       setSocketUrl('ws://127.0.0.1:8000/ws/traceroute/');
     }, 100);
+
+    // kept for debugging purposes
+    // setMapURL('http://127.0.0.1:8000/getmap/');
+    // setGraphURL('http://127.0.0.1:8000/getgraph/');
   };
   
 
@@ -121,13 +132,20 @@ function App() {
                 </td>
                 <td className={message.city ? '' : 'text-secondary'}>{message.city || 'Private'}</td>
                 <td className={message.state ? '' : 'text-secondary'}>{message.state || 'Private'}</td>
-                <td className={message.country ? '' : 'text-secondary'}>{message.country || 'Private'}</td>
-              </tr>                        
+                <td className={message.country ? '' : 'text-secondary'}>
+                  {message.country || 'Private'}
+                  {message.country_flag && <img src={message.country_flag} alt={message.country} style={{ width: '25px', marginLeft: '10px' }} />}
+                </td>
+            </tr>                      
               ))}
             </tbody>
           </table>
         )}
       </div>
+      {mapURL && <h4 className='mb-3 mt-5'>Map Visualization</h4>}
+      {mapURL && <iframe src={mapURL} title="Map" style={{ width: '80%', height: '500px' }} />}
+      {graphURL && <h4 className='mb-3 mt-5'>Graph Visualization</h4>}
+      {graphURL && <iframe src={graphURL} title="Graph" style={{ width: '80%', height: '500px' }} />}           
     </div>
   );
 }

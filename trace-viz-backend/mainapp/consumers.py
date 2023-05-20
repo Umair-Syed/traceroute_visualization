@@ -5,11 +5,13 @@ import subprocess
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from threading import Thread
 from .locations import get_location
+from django.core.cache import cache
 
 class TracerouteConsumer(AsyncJsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.proc = None
+        self.locations = []
 
     async def connect(self):
         await self.accept()
@@ -41,7 +43,7 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
             print("Line: ", line)
 
             if "Unable to resolve target system name" in line:
-                # Send the error message asynchronously to the client
+                # Send the error message asynchronously to the client                
                 error_msg = {"status": "error", "message": line}
                 asyncio.run_coroutine_threadsafe(self.send_json(error_msg), loop)
                 # Call the disconnect method
@@ -53,7 +55,17 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
             
             for ip in ip_addresses:
                 # Get the location information for this IP
-                location_info = get_location(ip)
+                location_info = get_location(ip)     
+
+                self.locations.append([
+                    location_info[1],  # latitude
+                    location_info[2],  # longitude
+                    location_info[0],  # ip
+                    location_info[3],  # city
+                    location_info[4],  # state
+                    location_info[5]   # country
+                ])
+
                 location_dict = {
                     "ip": location_info[0],
                     "latitude": location_info[1],
@@ -61,12 +73,17 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
                     "city": location_info[3],
                     "state": location_info[4],
                     "country": location_info[5],
+                    "country_flag": location_info[6]
                 }
 
                 # Send the location information asynchronously to the client
                 future = asyncio.run_coroutine_threadsafe(self.send_json(location_dict), loop)
                 # Block until the future completes
                 future.result()
+
+        # Store the locations into the cache so that can be used in views.py
+        cache.set('traceroute_locations', self.locations, 300)  # Store for 5 minutes
+        self.locations = [] # stored in cache, so clear it
 
         # Send a final message indicating the end of traceroute
         final_msg = {"status": "finished"}
@@ -82,6 +99,7 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
             await super().send_json(content, close)
 
     async def disconnect(self, close_code):
+        # Called when a WebSocket connection is closed.
         # If there is a running traceroute, terminate it
         print("Disconnect called")
         if self.proc:

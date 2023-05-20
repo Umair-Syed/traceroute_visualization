@@ -25,6 +25,9 @@ SECRET_KEY = 'django-insecure-rjdar5vo64r$anqe4)k+^)3^_flz=!0j*%7ca#k_23m3p4-n_l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# If you want to allow all origins:
+CORS_ALLOW_ALL_ORIGINS = True
+
 ALLOWED_HOSTS = []
 
 
@@ -39,20 +42,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mainapp'
+    'mainapp',
+    'corsheaders',
 ]
 
 ASGI_APPLICATION = 'traceviz.asgi.application'
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',    
 ]
 
 ROOT_URLCONF = 'traceviz.urls'
@@ -72,6 +77,12 @@ TEMPLATES = [
         },
     },
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
 WSGI_APPLICATION = 'traceviz.wsgi.application'
 
