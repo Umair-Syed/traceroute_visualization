@@ -21,13 +21,13 @@ body {
     line-height: 1.1;    
   }
   
-  .search-btn {
+  .run-btn {
     background-color: #646cff;
     color: #ffffff;
     border: none;
   }
   
-  .search-btn:hover {
+  .run-btn:hover {
     background-color: #535bf2;
   }
   
