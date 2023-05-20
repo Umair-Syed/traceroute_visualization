@@ -12,6 +12,8 @@ function App() {
   const [socketUrl, setSocketUrl] = React.useState<string | null>(null);
   const [messageHistory, setMessageHistory] = React.useState<any[]>([]);
   const [tracerouteStatus, setTracerouteStatus] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, webSocketOptions);
 
@@ -19,7 +21,13 @@ function App() {
     if (lastMessage) {
       console.log('Received message: ', lastMessage.data);
       const jsonData = JSON.parse(lastMessage.data); // parse the data into JSON
-      setMessageHistory((prev) => [...prev, jsonData]);
+      // Check if it's an error message
+      if (jsonData.status === "error") {
+        setErrorMessage(jsonData.message);
+        setTracerouteStatus('Traceroute Finished');
+      } else {
+        setMessageHistory((prev) => [...prev, jsonData]);
+      }
     }
   }, [lastMessage]);
 
@@ -40,12 +48,16 @@ function App() {
     setInput(event.target.value);
   };
 
-  const handleRunClick = () => {
+  const handleRunClick = (event: React.FormEvent) => {
+    event.preventDefault();
     // Disconnect the existing WebSocket, if any
     setSocketUrl(null);
   
     // Clear the old traceroute results
     setMessageHistory([]);
+
+    // Clear the old error message
+    setErrorMessage('');
     
     // Use a timeout to allow state updates to propagate
     setTimeout(() => {
@@ -58,7 +70,7 @@ function App() {
   return (
     <div id="root" className="d-flex flex-column align-items-center justify-content-center">
       <h1>Traceroute Visualization</h1>
-      <div className="d-flex justify-content-center mt-5" style={{ gap: '0.5rem', width: '100%' }}>
+      <form onSubmit={handleRunClick} className="d-flex justify-content-center mt-5" style={{ gap: '0.5rem', width: '100%' }}>
         <input
           type="text"
           className="form-control"
@@ -67,13 +79,23 @@ function App() {
           value={input}
           onChange={handleChange}
         />
-        <button type="button" className="btn run-btn" onClick={handleRunClick}>
+        <button type="submit" className="btn run-btn">
           Run
         </button>
+      </form>
+      <div className="mt-2">
+      <p className="text-secondary" style={{ fontSize: '12px', textAlign: 'center' }}>
+        Note: 1. Traceroute runs on the server.
+        <br />2. The map will appear once the traceroute is finished.
+      </p>
       </div>
-      <div className="mt-5">
+      <div className="mt-3">
         <h4 className={tracerouteStatus === 'Running Traceroute...' ? "text-warning" : "text-success"}>{tracerouteStatus}</h4>
-        {messageHistory.length > 0 && (
+        { errorMessage ? (
+          <div className="alert alert-danger" role="alert">
+            {errorMessage}
+          </div>
+        ) : messageHistory.length > 0 && (
           <table className="table table-bordered mt-4" style={{color: "white", borderColor: "white"}}>
             <thead>
               <tr>

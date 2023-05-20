@@ -29,7 +29,7 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
             thread = Thread(target=self.traceroute, args=(hostname, timeout, loop))
             thread.start()
 
-    def traceroute(self, hostname, timeout, loop):
+    def traceroute(self, hostname, timeout, loop):        
         self.proc = subprocess.Popen(
             ["tracert" if platform.system() == 'Windows' else "traceroute", "-w", str(timeout), hostname],
             stdout=subprocess.PIPE,
@@ -38,6 +38,16 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
         
         # Read the command output line by line
         for line in self.proc.stdout:
+            print("Line: ", line)
+
+            if "Unable to resolve target system name" in line:
+                # Send the error message asynchronously to the client
+                error_msg = {"status": "error", "message": line}
+                asyncio.run_coroutine_threadsafe(self.send_json(error_msg), loop)
+                # Call the disconnect method
+                asyncio.run_coroutine_threadsafe(self.disconnect(1000), loop)
+                return
+        
             ip_pattern = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
             ip_addresses = re.findall(ip_pattern, line)
             
