@@ -17,7 +17,7 @@ import mainapp.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'traceviz.settings')
 
-asgi_application = get_asgi_application() #new
+asgi_application = get_asgi_application()
 
 
 application = ProtocolTypeRouter({
