@@ -2,6 +2,7 @@ import folium
 from folium.utilities import validate_location
 
 def plot(locations):
+    print("Plot called")
     """Plots locations on a map with different colors based on the city name."""
     # Initialize the map
     m = folium.Map(location=[0, 0], zoom_start=2)

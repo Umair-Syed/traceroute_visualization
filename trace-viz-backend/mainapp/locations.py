@@ -1,7 +1,7 @@
 import platform
 import requests
 # Set up API credentials
-api_key = '774990ac82b72039c7d936663b5b56fa'
+api_key = '3b0a1e6f1c5322519f8fa048475ae1bf'
 
 # Define function to get location details for a single IP
 def get_location(ip):
@@ -16,7 +16,7 @@ def get_location(ip):
         country = data['country_name']
         country_flag = data['location']['country_flag']
     except KeyError as a:
-        latitude, longitude, city, state, country = 0, 0, None, None, None
+        latitude, longitude, city, state, country, country_flag = 0, 0, None, None, None, None
     return (ip, latitude, longitude, city, state, country, country_flag)
 
 def get_locations(ip_list):

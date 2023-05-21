@@ -5,11 +5,15 @@ from django.http import HttpResponse
 from .graph import *
 from .map import *
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.cache import never_cache
+from django.http import FileResponse
+from django.http import Http404
 
 def index(request):
     return render(request, 'hello.html', { 'name': 'World'})
 
 #The 'X-Frame-Options' header is used to indicate whether or not a browser should be allowed to render a page in an iframe
+@never_cache
 @xframe_options_exempt 
 def graph_view(request):
     locations = cache.get('traceroute_locations')
@@ -28,9 +32,13 @@ def graph_view(request):
 
     if locations is not None:
         create_graph(locations, 'mainapp/templates/graph.html')
-    return render(request, 'graph.html')
+    try:
+        return FileResponse(open('mainapp/templates/graph.html', 'rb'), content_type='text/html')
+    except FileNotFoundError:
+        raise Http404()
 
-@xframe_options_exempt
+@never_cache
+@xframe_options_exempt 
 def map_view(request):
     print("Map view called")
     locations = cache.get('traceroute_locations')
@@ -49,4 +57,7 @@ def map_view(request):
 
     if locations is not None:
         plot(locations)
-    return render(request, 'map.html')
+    try:
+        return FileResponse(open('mainapp/templates/map.html', 'rb'), content_type='text/html')
+    except FileNotFoundError:
+        raise Http404()

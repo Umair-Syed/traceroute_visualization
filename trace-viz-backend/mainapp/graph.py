@@ -1,6 +1,7 @@
 from pyvis import network as net 
 
 def create_graph(locations, filename):
+    print("Create graph called")
     G = net.Network(notebook=True)
     city_colors = {}
     for loc in locations:
