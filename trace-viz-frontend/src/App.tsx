@@ -47,8 +47,10 @@ function App() {
       if (!errorMessage) {
         // setMapURL('http://127.0.0.1:8000/getmap/');
         // setGraphURL('http://127.0.0.1:8000/getgraph/'); 
-        setMapURL('http://13.231.23.123/getmap/');
-        setGraphURL('http://13.231.23.123/getgraph/'); 
+        // setMapURL('http://13.231.23.123/getmap/');
+        // setGraphURL('http://13.231.23.123/getgraph/'); 
+        setMapURL('https://tracevizbackend.duckdns.org/getmap/');
+        setGraphURL('https://tracevizbackend.duckdns.org/getgraph/'); 
       }       
     }
   }, [readyState, errorMessage]);
@@ -73,7 +75,8 @@ function App() {
     // Use a timeout to allow state updates to propagate
     setTimeout(() => {
       // Start a new WebSocket connection      
-      setSocketUrl('ws://13.231.23.123/ws/traceroute/');
+      setSocketUrl('wss://tracevizbackend.duckdns.org/ws/traceroute/');
+      // setSocketUrl('ws://13.231.23.123/ws/traceroute/');
       // setSocketUrl('ws://127.0.0.1:8000/ws/traceroute/');
     }, 100);
 

@@ -29,7 +29,7 @@ DEBUG = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 ALLOWED_HOSTS = ['ipapi.com', '127.0.0.1']
-# ALLOWED_HOSTS = ['13.231.23.123', 'ec2-13-231-23-123.ap-northeast-1.compute.amazonaws.com', 'ipapi.com']
+# ALLOWED_HOSTS = ['13.231.23.123', 'ec2-13-231-23-123.ap-northeast-1.compute.amazonaws.com', 'ipapi.com','tracevizbackend.duckdns.org]
 
 
 # Application definition
