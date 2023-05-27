@@ -1,4 +1,4 @@
-# Trace Visualization App
+# Traceroute Visualization
 Open [https://traceroute-visualization.vercel.app/](https://traceroute-visualization.vercel.app/) to access the deployed application.
 
 
