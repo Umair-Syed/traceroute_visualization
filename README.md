@@ -58,6 +58,8 @@ The following steps will help you setup the Django backend on your local machine
 
 By default, the server will start on http://127.0.0.1:8000/
 
+**Note:** To fetch locations of ip addresses we are using ipapi.com, which has a limit of 1000 requests in free account. If you see only private addresses on running traceroute that implies 1000 limit is reached. You can create your own account in ipapi.com and just replace key in locations.py file in backend.
+
 ## Setting up the Frontend
 
 The following steps will help you setup the ReactJS frontend on your local machine:
