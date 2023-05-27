@@ -94,7 +94,7 @@ function App() {
           type="text"
           className="form-control"
           style={{ width: '40%' }}
-          placeholder="Enter hostname"
+          placeholder="Enter hostname (Example: wikipedia.org)"
           value={input}
           onChange={handleChange}
         />
