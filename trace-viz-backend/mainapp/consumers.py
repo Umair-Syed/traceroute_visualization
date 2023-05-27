@@ -12,6 +12,7 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.proc = None
         self.locations = []
+        self.ip_dict = {}
 
     async def connect(self):
         await self.accept()
@@ -53,9 +54,12 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
             ip_pattern = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
             ip_addresses = re.findall(ip_pattern, line)
             
-            for ip in ip_addresses:
+            # for ip in ip_addresses:
+            if len(ip_addresses) > 0 and self.ip_dict.get(ip_addresses[0]) is None:
                 # Get the location information for this IP
-                location_info = get_location(ip)     
+                ip_address = ip_addresses[0]
+                self.ip_dict[ip_address] = True # mark as visited
+                location_info = get_location(ip_address)     
 
                 self.locations.append([
                     location_info[1],  # latitude
@@ -84,6 +88,7 @@ class TracerouteConsumer(AsyncJsonWebsocketConsumer):
         # Store the locations into the cache so that can be used in views.py
         cache.set('traceroute_locations', self.locations, 300)  # Store for 5 minutes
         self.locations = [] # stored in cache, so clear it
+        self.ip_dict.clear() # so clear dict
 
         # Send a final message indicating the end of traceroute
         final_msg = {"status": "finished"}

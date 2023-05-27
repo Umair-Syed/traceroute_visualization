@@ -1,7 +1,7 @@
 import platform
 import requests
 # Set up API credentials
-api_key = '3b0a1e6f1c5322519f8fa048475ae1bf'
+api_key = '7a2edb1673278b4cda71e3e1383ffa9c'
 
 # Define function to get location details for a single IP
 def get_location(ip):

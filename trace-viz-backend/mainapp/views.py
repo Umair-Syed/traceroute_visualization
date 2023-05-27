@@ -31,6 +31,7 @@ def graph_view(request):
     # ]
 
     if locations is not None:
+        locations.pop(0)
         create_graph(locations, 'mainapp/templates/graph.html')
     try:
         return FileResponse(open('mainapp/templates/graph.html', 'rb'), content_type='text/html')
@@ -56,6 +57,7 @@ def map_view(request):
     # ]
 
     if locations is not None:
+        locations.pop(0)
         plot(locations)
     try:
         return FileResponse(open('mainapp/templates/map.html', 'rb'), content_type='text/html')
