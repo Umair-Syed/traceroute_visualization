@@ -2,7 +2,7 @@
 ![Screenshot](screenshot.png)
 
 
-This project contains a Django backend and a ReactJS frontend for a Trace Visualization Application.
+This project contains a Django backend (with **websockets**) and a ReactJS frontend for a Trace Visualization Application.
 
 ## Getting Started
 
